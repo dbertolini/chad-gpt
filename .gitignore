@@ -1,0 +1,4 @@
+.env*
+backend/audios/*
+backend/__pycache__
+backend/env

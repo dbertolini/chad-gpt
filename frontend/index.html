@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChadGPT</title>
+    <style>
+        /* Puedes personalizar el estilo */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #chat-container {
+            width: 500px;
+            margin: auto;
+        }
+
+        #response-container {
+            margin-top: 20px;
+        }
+
+        #avatar {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <h1>Interacción con IA</h1>
+        <textarea id="user-input" rows="4" cols="50" placeholder="Escribe tu mensaje..."></textarea><br><br>
+        <button onclick="sendMessage(event)">Enviar</button>
+        <script>
+            document.getElementById("user-input").addEventListener("keypress", function (event) {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault(); // Evita el salto de línea
+                    sendMessage(event);
+                }
+            });
+        </script>
+
+        <div id="response-container">
+            <div id="avatar-container">
+                <img id="avatar"
+                    src="https://media.istockphoto.com/id/948886888/es/foto/cara-recortada-de-apuesto-joven-dando-sonrisa-con-hoyuelos-de-boca-cerrada.jpg?s=612x612&w=0&k=20&c=dDtAg3-l-1gWHj5DNCYYG3LYODYPqXWGcH_QcLAIpXg="
+                    width="300" height="300" alt="Cabeza parlante">
+            </div> <!-- Aquí va la animación -->
+            <p id="response-text"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script>
+        const mouthFrames = [
+            "https://media.istockphoto.com/id/948886888/es/foto/cara-recortada-de-apuesto-joven-dando-sonrisa-con-hoyuelos-de-boca-cerrada.jpg?s=612x612&w=0&k=20&c=dDtAg3-l-1gWHj5DNCYYG3LYODYPqXWGcH_QcLAIpXg=", // Boca cerrada (reposo)
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDaea16QkR_L3BYGQNTmGGadMYBBlImJLIIw&s", // Boca semiabierta
+            "https://media.istockphoto.com/id/522185343/es/foto/qu%C3%A9-s%C3%B3lo-ha-ocurrido.jpg?s=612x612&w=0&k=20&c=PSxmqKqF9lFhZhQSK1agR0SnttXBi8YWgyAbtgn1JQI=", // Boca abierta
+            "https://us.123rf.com/450wm/photocatcher/photocatcher1710/photocatcher171000078/88968595-retrato-de-hombre-barbudo-con-la-boca-abierta-y-emoci%C3%B3n-asombrada-en-la-cara.jpg?ver=6", // Boca más abierta
+        ];
+
+        async function sendMessage(event) {
+            event.preventDefault(); // Prevent page refresh
+            const userInput = document.getElementById("user-input").value;
+            document.getElementById("user-input").value = "";
+            if (!userInput.trim()) return;
+
+            // Enviar solicitud a la API
+            const response = await fetch("http://127.0.0.1:8000/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ input_text: userInput })
+            });
+
+            if (!response.ok) {
+                console.error('Error en la solicitud');
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById("response-text").textContent = data.response;
+            const audioUrl = data.audio_file_path; // URL del archivo de audio devuelto por la API
+            const audio = new Audio(audioUrl);
+            audio.crossOrigin = "anonymous";
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaElementSource(audio);
+            const analyser = audioContext.createAnalyser();
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            analyser.fftSize = 512;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const avatar = document.querySelector("#avatar-container img");
+
+            function animateMouth() {
+                analyser.getByteFrequencyData(dataArray);
+                let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+
+                if (volume < 1) {
+                    avatar.src = mouthFrames[0]; // Boca cerrada
+                } else if (volume < 20) {
+                    avatar.src = mouthFrames[1]; // Boca semiabierta
+                } else if (volume < 30) {
+                    avatar.src = mouthFrames[2]; // Boca abierta
+                } else {
+                    avatar.src = mouthFrames[3]; // Boca más abierta
+                }
+
+                if (!audio.paused) {
+                    requestAnimationFrame(animateMouth);
+                } else {
+                    avatar.src = mouthFrames[0]; // Volver a boca cerrada cuando termine
+                }
+            }
+
+            audio.onplay = () => {
+                audioContext.resume().then(() => {
+                    animateMouth();
+                });
+            };
+
+            audio.play();
+
+            // // Reproducir la respuesta en voz
+            // const audioUrl = `http://127.0.0.1:8000/voice?text=${encodeURIComponent(data.response)}`;
+            // speak(data.response); // Llama a la función speak para reproducir el audio
+            // // playVoice(audioUrl);
+            // //const audio = new Audio(audioUrl);
+            // //audio.play();
+
+            // // Aquí puedes agregar la animación de la cabeza
+            // animateHead();
+        }
+
+        // function animateHead() {
+        //     // Aquí va tu código de animación de la cabeza (puede ser con un gif o un video)
+        //     const avatar = document.getElementById("avatar");
+        //     avatar.style.backgroundColor = "blue"; // Cambio de color como ejemplo
+        // }
+
+        // async function generateVoice(text) {
+        //     const response = await fetch(`http://127.0.0.1:8000/voice?text=${encodeURIComponent(text)}`);
+        //     const data = await response.json();
+
+        //     console.log("Audio generado:", data.audio_url);
+        //     return data.audio_url;
+        // }
+
+        // async function playAudio(audioUrl) {
+        //     const audio = new Audio(`http://127.0.0.1:8000${audioUrl}`);
+        //     audio.play();
+        // }
+
+
+        // async function speak(text) {
+        //     const audioUrl = await generateVoice(text);
+        //     playAudio(audioUrl);
+        // }
+        // speak("Hola, cómo estás?");
+
+
+        // async function playVoice(audioUrl) {
+        //     const audio = new Audio(audioUrl);
+        //     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        //     const source = audioContext.createMediaElementSource(audio);
+        //     const analyser = audioContext.createAnalyser();
+        //     source.connect(analyser);
+        //     analyser.connect(audioContext.destination);
+
+        //     analyser.fftSize = 512;
+        //     const bufferLength = analyser.frequencyBinCount;
+        //     const dataArray = new Uint8Array(bufferLength);
+
+        //     const avatar = document.getElementById("avatar"); // Imagen del avatar
+
+        //     function animateMouth() {
+        //         analyser.getByteFrequencyData(dataArray);
+        //         let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength; // Calcula el volumen promedio
+
+        //         if (volume < 10) {
+        //             avatar.src = mouthFrames[0]; // Boca cerrada
+        //         } else if (volume < 50) {
+        //             avatar.src = mouthFrames[1]; // Boca semiabierta
+        //         } else if (volume < 100) {
+        //             avatar.src = mouthFrames[2]; // Boca abierta
+        //         } else {
+        //             avatar.src = mouthFrames[3]; // Boca más abierta
+        //         }
+
+        //         if (!audio.paused) {
+        //             requestAnimationFrame(animateMouth);
+        //         } else {
+        //             avatar.src = mouthFrames[0]; // Volver a boca cerrada cuando termine
+        //         }
+        //     }
+
+        //     audio.onplay = () => {
+        //         audioContext.resume().then(() => {
+        //             animateMouth();
+        //         });
+        //     };
+
+        //     audio.play();
+        // }
+
+    </script>
+</body>
+
+</html>
