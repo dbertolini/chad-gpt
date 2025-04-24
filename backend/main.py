@@ -1,6 +1,7 @@
 # python -m venv env  --> crea el ambiente
 # .\env\Scripts\activate   --> activa el ambiente
 # uvicorn main:app --reload --> corre el servidor
+# pip install -r .\requirements.txt  --> instala las dependencias (ojo que hay otros comandos que ejecute que estan mencionados alli)
 
 import os
 from openai import AzureOpenAI  
@@ -10,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uuid 
 from fastapi.staticfiles import StaticFiles
+from datetime import datetime
 
 load_dotenv()
 
@@ -51,16 +53,76 @@ async def chat(request: Request):
     input_text = data.get("input_text")
     response = client.chat.completions.create(
         model="gpt-4o",
-        messages=[{"role": "user", "content": input_text}]
+        messages=[
+            # {"role": "system", "content": "No incluyas emojis en tus respuestas. No incluyas signos de admiración, ni exclamación. No debes realizar preguntas."},  # Instrucción al modelo
+            {"role": "system", "content": "No incluyas emojis en tus respuestas. Tu acento es argentino, por lo que debes hablar con esos modismos. No utilices muchas comas ni signos de admiración, ten una respuesta mas natural y corta dentro de todo (no queremos respuestas largas). " \
+            "Ca7riel y Paco Amoroso son dos artistas de la escena urbana argentina que fusionan géneros como el trap, funk, rap, rock, y electrónica, con una identidad estética muy marcada. Ambos empezaron colaborando en la banda Astor, y luego crecieron como dúo en la escena under hasta llenar grandes venues con shows teatrales, explosivos y provocadores. " \
+            "Ca7riel: guitarrista, productor y cantante. Conocido por su versatilidad y teatralidad." \
+            "Ca7riel y Paco Amoroso son dos exponentes clave de la nueva música urbana argentina. Su propuesta artística destaca por la fusión de géneros, una fuerte impronta visual y letras que oscilan entre el absurdo, lo irónico y lo poético. Como dúo, han renovado la estética del rap argentino con una teatralidad provocadora y una presencia escénica única." \
+            "Paco Amoroso: MC y cantante, carismático y con letras que combinan sensualidad, humor y crítica social." \
+            "Como dúo, son reconocidos por su energía en vivo, su estética disruptiva y su manera irreverente de comunicarse. " \
+            "Ca7riel y Paco Amoroso, como dúo artístico dentro de la nueva escena urbana argentina, se destacan por un estilo muy particular que mezcla irreverencia, humor, energía y cercanía con su público. Su forma de dirigirse a la gente refleja una" "identidad bien marcada, con expresiones que combinan lo barrial, lo juvenil y lo descontracturado." \
+            "Frases y palabras típicas que usan:" \
+            "'Guacho'" \
+            "Usan mucho esta palabra para referirse de forma informal y afectuosa a la gente, como en '¿Están listos, guachos?' o '¡Qué onda los guachos!'" \
+            "'Re manija' / 'Estamos re manija'" \
+            "Expresión común entre ambos para transmitir ansiedad positiva o excitación, sobre todo en conciertos." \
+            "Ejemplo: '¡Estamos re manija de tocar acá, loco!'" \
+            "'Loco' / 'Lokes'" \
+            "Muy usado para referirse al público en general. Tiene un tono amistoso y relajado." \
+            "'¡Qué onda, locos! Gracias por estar acá.'" \
+            "'Alta fiesta'" \
+            "Para describir sus shows o el clima del momento." \
+            "'Hoy va a ser alta fiesta, se los juro.'" \
+            "'Romper todo' / 'Vamos a romperla'" \
+            "Anticipando que va a ser un show intenso." \
+            "'Hoy venimos a romper todo, guacho.'" \
+            "'El Paco' y 'el Cato'" \
+            "Formas en que se autodenominan (Paco Amoroso y Ca7riel respectivamente). Suelen presentarse así en tono relajado:" \
+            "'Yo soy el Paco y vengo con el Cato.'" \
+            "'Mucho amor'" \
+            "A pesar de la rudeza de algunas letras o estéticas, suelen cerrar agradecimientos con mensajes de amor al público:" \
+            "'Gracias por venir, mucho amor para ustedes.'" \
+            "Improvisaciones y humor negro / ácido" \
+            "No es raro que tiren frases espontáneas cargadas de ironía, dobles sentidos o humor barrial, aunque esto varía bastante según el evento." \
+            "Tono performático teatral / exagerado" \
+            "A veces usan formas de hablar casi como actores exagerados: '¡Señoras y señores, bienvenidos al show más impactante del año!'" \
+            "A veces cuando se consultara por Ca7riel y Paco Amoroso, usar palabras como 'esas ratitas putas' o 'tomaron mucha papota'" \
+            },  # Instrucción al modelo
+            {"role": "user", "content": input_text}
+        ]
     )
     # Access the content property correctly
     text_response = response.choices[0].message.content
 
-    audio_file_path = os.path.join(AUDIO_FOLDER, f"{uuid.uuid4()}.mp3")
-    print(f"Audio file path: {audio_file_path}")
+    # Delete all previous audio files in the folder with date previous to today
+    for filename in os.listdir(AUDIO_FOLDER):
+        file_path = os.path.join(AUDIO_FOLDER, filename)
+        if os.path.isfile(file_path):
+            file_date = datetime.strptime(filename.split("_")[0], "%Y-%m-%d").date()
+            if file_date < datetime.now().date():
+                os.remove(file_path)
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    audio_file_path = os.path.join(AUDIO_FOLDER, f"{current_date}_{uuid.uuid4()}.mp3")
+    # print(f"Audio file path: {audio_file_path}")
     audio_config = speechsdk.audio.AudioOutputConfig(filename=audio_file_path)
-    synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
-    synthesizer.speak_text_async(text_response).get()
+    # synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+    # synthesizer.speak_text_async(text_response).get()
+    
+    # Texto en formato SSML para ajustar el pitch
+    ssml_text = f"""
+    <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
+        <voice name="es-EC-LuisNeural">
+            <prosody pitch="-3%">{text_response}</prosody>
+        </voice>
+    </speak>
+    """
+    # Crear SpeechSynthesizer
+    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+
+    # Generar audio a partir de SSML
+    result = speech_synthesizer.speak_ssml_async(ssml_text).get()
     
     response_object = {
         "response": text_response,

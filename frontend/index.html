@@ -5,15 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChadGPT</title>
+    <link rel="icon" type="image/png" href="images/avatar/1.png">
     <style>
-        /* Puedes personalizar el estilo */
+        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
 
-        #chat-container {
-            width: 500px;
-            margin: auto;
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
         }
 
         #response-container {
@@ -21,47 +30,193 @@
         }
 
         #avatar {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
+            width: 400px;
             background-color: #ccc;
             display: block;
             margin: auto;
+        }
+
+        /* Estilos para la introducción */
+        #intro-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        #intro-container img {
+            max-width: 80%;
+            max-height: 80%;
+            opacity: 0;
         }
     </style>
 </head>
 
 <body>
-    <div id="chat-container">
-        <h1>Interacción con IA</h1>
-        <textarea id="user-input" rows="4" cols="50" placeholder="Escribe tu mensaje..."></textarea><br><br>
-        <button onclick="sendMessage(event)">Enviar</button>
-        <script>
-            document.getElementById("user-input").addEventListener("keypress", function (event) {
-                if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault(); // Evita el salto de línea
-                    sendMessage(event);
-                }
-            });
-        </script>
-
-        <div id="response-container">
-            <div id="avatar-container">
-                <img id="avatar"
-                    src="https://media.istockphoto.com/id/948886888/es/foto/cara-recortada-de-apuesto-joven-dando-sonrisa-con-hoyuelos-de-boca-cerrada.jpg?s=612x612&w=0&k=20&c=dDtAg3-l-1gWHj5DNCYYG3LYODYPqXWGcH_QcLAIpXg="
-                    width="300" height="300" alt="Cabeza parlante">
-            </div> <!-- Aquí va la animación -->
-            <p id="response-text"></p>
+    <!-- Contenedor de introducción -->
+    <div id="intro-container">
+        <img id="intro-image" src="images/intro/1.png" alt="Introducción">
+        <button id="continue-button"
+            style="display: block; margin-top: 20px; padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer; text-transform: uppercase;">
+            Continuar
+        </button>
+        <div
+            style="position: fixed; bottom: 10px; width: 100%; text-align: center; color: #ff0095; font-size: 14px; font-family: 'Courier New', Courier, monospace; background-color: black; padding: 5px;">
+            Para los grosos de Ca7riel y Paco Amoroso, de <a href="https://www.linkedin.com/in/bertolinidiego/"
+                target="_blank" style="color: #00ff00; text-decoration: none;">Berto</a>
         </div>
     </div>
 
+    <!-- Video de fondo -->
+    <video id="background-video" autoplay loop muted>
+        <source src="videos/spiral.mp4" type="video/mp4">
+        Tu navegador no soporta la reproducción de videos.
+    </video>
+
+    <div
+        style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; width: 80%; max-width: 800px; gap: 10px;">
+        <textarea id="user-input" rows="1" maxlength="500" placeholder="Escribe tu mensaje a ChadGPT..."
+            style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
+        <button onclick="sendMessage(event)"
+            style="display: block; padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer; text-transform: uppercase;">
+            Enviar
+        </button>
+    </div>
+
+    <div id="avatar-container"
+        style="background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;">
+        <img id="avatar" src="images/avatar/1.png" width="300" alt="Cabeza parlante" style="background: none;">
+    </div>
+
+    <style>
+        @keyframes float {
+            0% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateY(-20px);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+        }
+    </style>
+
+    <div id="response-container" style="text-align: center; margin-top: 20px;">
+        <p id="response-text"
+            style="display: inline-block; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px; max-width: 80%; word-wrap: break-word; font-size: 18px;">
+        </p>
+    </div>
+
+    <script>
+        // Manejo de la introducción
+        const introContainer = document.getElementById("intro-container");
+        const introImage = document.getElementById("intro-image");
+        const continueButton = document.getElementById("continue-button");
+        const introImages = [
+            "images/intro/1.png",
+            "images/intro/2.png",
+            "images/intro/3.png",
+            "images/intro/4.png",
+            "images/intro/5.png",
+            "images/intro/6.png"
+        ];
+        let currentImageIndex = 0;
+
+        function showNextImage() {
+            if (currentImageIndex > 0) {
+                introImage.style.opacity = 0; // Ocultar imagen actual
+            }
+            if (currentImageIndex < introImages.length) {
+                introImage.src = introImages[currentImageIndex];
+                introImage.style.opacity = 1; // Mostrar nueva imagen
+                currentImageIndex++;
+                setTimeout(showNextImage, 200); // Cambiar cada 2 segundos
+            } else {
+                // Mostrar el botón de continuar al finalizar la transición
+                continueButton.style.display = "block";
+                introImage.src = introImages[introImages.length - 1]; // Mostrar la última imagen
+                introImage.style.opacity = 1; // Asegurarse de que sea visible
+            }
+        }
+
+        // Manejar el clic en el botón de continuar
+        continueButton.addEventListener("click", () => {
+            introContainer.style.transition = "opacity 0.5s ease-out"; // Agregar transición para el fade out
+            introContainer.style.opacity = 0; // Ocultar contenedor de introducción
+            setTimeout(() => {
+                introContainer.style.display = "none"; // Eliminar contenedor
+                document.getElementById("user-input").focus();
+            }, 500); // Esperar a que la opacidad llegue a 0
+        });
+
+        // Iniciar la introducción
+        showNextImage();
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script>
+        // Código existente para el manejo de mensajes y animaciones
+        document.getElementById("user-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage(event);
+            }
+        });
+
+        // document.getElementById("user-input").value = "hola amigo, como estas?";
+
         const mouthFrames = [
-            "https://media.istockphoto.com/id/948886888/es/foto/cara-recortada-de-apuesto-joven-dando-sonrisa-con-hoyuelos-de-boca-cerrada.jpg?s=612x612&w=0&k=20&c=dDtAg3-l-1gWHj5DNCYYG3LYODYPqXWGcH_QcLAIpXg=", // Boca cerrada (reposo)
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDaea16QkR_L3BYGQNTmGGadMYBBlImJLIIw&s", // Boca semiabierta
-            "https://media.istockphoto.com/id/522185343/es/foto/qu%C3%A9-s%C3%B3lo-ha-ocurrido.jpg?s=612x612&w=0&k=20&c=PSxmqKqF9lFhZhQSK1agR0SnttXBi8YWgyAbtgn1JQI=", // Boca abierta
-            "https://us.123rf.com/450wm/photocatcher/photocatcher1710/photocatcher171000078/88968595-retrato-de-hombre-barbudo-con-la-boca-abierta-y-emoci%C3%B3n-asombrada-en-la-cara.jpg?ver=6", // Boca más abierta
+            "images/avatar/1.png", // Boca cerrada (reposo)
+            "images/avatar/2.png", // Boca cerrada en movimiento
+            "images/avatar/3.png",
+            "images/avatar/4.png",
+            "images/avatar/5.png",// Boca cerrada en movimiento
+            "images/avatar/6.png",
+            "images/avatar/7.png",
+            "images/avatar/8.png",// Boca cerrada en movimiento
+            "images/avatar/9.png",// Boca cerrada en movimiento
+            "images/avatar/10.png",
+            "images/avatar/11.png",
+            "images/avatar/12.png",
+            "images/avatar/13.png",
+            "images/avatar/14.png",
+            "images/avatar/15.png",
+            "images/avatar/16.png",
+            "images/avatar/17.png",
+            "images/avatar/18.png",
+            "images/avatar/19.png",// Boca cerrada en movimiento
+            "images/avatar/20.png",
+            "images/avatar/21.png",
+            "images/avatar/22.png",
+            "images/avatar/23.png",
+            "images/avatar/24.png",
+            "images/avatar/25.png",
+            "images/avatar/26.png",
+            "images/avatar/27.png",
+            "images/avatar/28.png",
+            "images/avatar/29.png",// Boca cerrada en movimiento
+            "images/avatar/30.png",// Boca cerrada en movimiento
+            "images/avatar/31.png",
+            "images/avatar/32.png",
+            "images/avatar/33.png",// Boca cerrada en movimiento
+            "images/avatar/34.png",// Boca cerrada en movimiento
+            "images/avatar/35.png",
+            "images/avatar/36.png",// Boca cerrada en movimiento
+            "images/avatar/37.png",
+            "images/avatar/38.png",
+            "images/avatar/39.png",
+            "images/avatar/40.png",
+            "images/avatar/41.png"
         ];
 
         async function sendMessage(event) {
@@ -103,17 +258,45 @@
 
             function animateMouth() {
                 analyser.getByteFrequencyData(dataArray);
+
+                // // OPCION 1
+                // let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+                // if (volume < 1) {
+                //     avatar.src = mouthFrames[0]; // Boca cerrada
+                // } else if (volume < 20) {
+                //     avatar.src = mouthFrames[1]; // Boca semiabierta
+                // } else if (volume < 30) {
+                //     avatar.src = mouthFrames[2]; // Boca abierta
+                // } else {
+                //     avatar.src = mouthFrames[3]; // Boca más abierta
+                // }
+
+                // // OPCION 2
+                // let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+                // const frameIndex = Math.min(
+                //     Math.floor((volume / 255) * mouthFrames.length),
+                //     mouthFrames.length - 1
+                // );
+                // avatar.src = mouthFrames[frameIndex];
+
+                // OPCION 3
+                let frameIndex = 0;
+                analyser.getByteFrequencyData(dataArray);
                 let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
 
-                if (volume < 1) {
-                    avatar.src = mouthFrames[0]; // Boca cerrada
-                } else if (volume < 20) {
-                    avatar.src = mouthFrames[1]; // Boca semiabierta
-                } else if (volume < 30) {
-                    avatar.src = mouthFrames[2]; // Boca abierta
+                if (volume < 5) {
+                    // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
+                    const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
+                    frameIndex = closedMouthFrames[Math.floor(Date.now() / 200) % closedMouthFrames.length];
                 } else {
-                    avatar.src = mouthFrames[3]; // Boca más abierta
+                    // Gesticular según el volumen
+                    frameIndex = Math.min(
+                        Math.floor((volume / 255) * (mouthFrames.length - 1)),
+                        mouthFrames.length - 1
+                    );
                 }
+
+                avatar.src = mouthFrames[frameIndex];
 
                 if (!audio.paused) {
                     requestAnimationFrame(animateMouth);
