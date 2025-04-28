@@ -31,6 +31,7 @@ jobs:
 
       - name: Create and start virtual environment
         run: |
+          cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           python -m venv venv
           source venv/bin/activate
 
