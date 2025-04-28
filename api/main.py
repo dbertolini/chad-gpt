@@ -41,7 +41,7 @@ app.mount("/audios", StaticFiles(directory=AUDIO_FOLDER), name="audios")
 # Habilitar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["yellow-beach-0bf12bd10.6.azurestaticapps.net"], # allow_origins=["http://127.0.0.1:5500"],  # Permitir solo el origen del frontend
+    allow_origins=["*"], # allow_origins=["http://127.0.0.1:5500"],  # Permitir solo el origen del frontend
     allow_credentials=True,
     allow_methods=["*"],  # Permitir todos los métodos HTTP
     allow_headers=["*"],  # Permitir todos los encabezados
