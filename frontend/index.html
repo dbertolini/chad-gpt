@@ -229,7 +229,7 @@
             if (!userInput.trim()) return;
 
             // Enviar solicitud a la API
-            const response = await fetch("https://chad-gpt.azurewebsites.net/chat", {
+            const response = await fetch("https://chad-gpt.azurewebsites.net/api/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
