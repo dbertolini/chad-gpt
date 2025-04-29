@@ -229,7 +229,7 @@
             if (!userInput.trim()) return;
 
             // Enviar solicitud a la API
-            const response = await fetch("https://chad-gpt.azurewebsites.net/chat", {
+            const response = await fetch("https://chad-gpt.azurewebsites.net/api/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -245,7 +245,17 @@
             const data = await response.json();
             document.getElementById("response-text").textContent = data.response;
             const audioUrl = data.audio_file_path; // URL del archivo de audio devuelto por la API
-            const audio = new Audio(audioUrl);
+            const responseAudio = await fetch("https://chad-gpt.azurewebsites.net/api/audios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ filename: audioUrl })
+            });
+            const audioData = await responseAudio.blob();
+            const audio = new Audio(URL.createObjectURL(audioData));
+
+            // const audio = new Audio("http://localhost:7071/audios/" + audioUrl);
             audio.crossOrigin = "anonymous";
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const source = audioContext.createMediaElementSource(audio);
