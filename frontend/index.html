@@ -87,7 +87,7 @@
         style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; width: 80%; max-width: 800px; gap: 10px;">
         <textarea id="user-input" rows="1" maxlength="500" placeholder=""
             style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
-        <button id="send-button"
+        <button onclick="sendMessage(event)"
             style="display: block; padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer; text-transform: uppercase;">
             Enviar
         </button>
@@ -176,7 +176,7 @@
             }
         });
 
-        document.getElementById("send-button").addEventListener("click", sendMessage);
+        // document.getElementById("user-input").value = "hola amigo, como estas?";
 
         const mouthFrames = [
             "images/avatar/1.png", // Boca cerrada (reposo)
