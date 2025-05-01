@@ -293,8 +293,8 @@
 
                 // OPCION 3
                 let frameIndex = 0;
-                analyser.getByteFrequencyData(dataArray);
-                let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+                //analyser.getByteFrequencyData(dataArray);
+                //let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
 
                 // if (volume < 5) {
                 //     // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
@@ -307,7 +307,8 @@
                 //         mouthFrames.length - 1
                 //     );
                 // }
-                frameIndex = Math.floor(Math.random() * mouthFrames.length);
+                frameIndex = Math.floor(Math.random() * mouthFrames.length) - 1;
+                frameIndex = frameIndex < 0 ? 0 : frameIndex;
 
                 avatar.src = mouthFrames[frameIndex];
 
