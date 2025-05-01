@@ -255,7 +255,6 @@
             const audioData = await responseAudio.blob();
             const audio = new Audio(URL.createObjectURL(audioData));
 
-            // const audio = new Audio("http://localhost:7071/audios/" + audioUrl);
             audio.crossOrigin = "anonymous";
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const source = audioContext.createMediaElementSource(audio);
@@ -272,41 +271,7 @@
             function animateMouth() {
                 analyser.getByteFrequencyData(dataArray);
 
-                // // OPCION 1
-                // let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-                // if (volume < 1) {
-                //     avatar.src = mouthFrames[0]; // Boca cerrada
-                // } else if (volume < 20) {
-                //     avatar.src = mouthFrames[1]; // Boca semiabierta
-                // } else if (volume < 30) {
-                //     avatar.src = mouthFrames[2]; // Boca abierta
-                // } else {
-                //     avatar.src = mouthFrames[3]; // Boca más abierta
-                // }
-
-                // // // OPCION 2
-                // let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-                // const frameIndex = Math.min(
-                //     Math.floor((volume / 255) * mouthFrames.length),
-                //     mouthFrames.length - 1
-                // );
-
-                // OPCION 3
                 let frameIndex = 0;
-                //analyser.getByteFrequencyData(dataArray);
-                //let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-
-                // if (volume < 5) {
-                //     // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
-                //     const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
-                //     frameIndex = closedMouthFrames[Math.floor(Date.now() / 100) % closedMouthFrames.length];
-                // } else {
-                //     // Gesticular según el volumen
-                //     frameIndex = Math.min(
-                //         Math.floor((volume / 255) * (mouthFrames.length - 1)),
-                //         mouthFrames.length - 1
-                //     );
-                // }
                 frameIndex = Math.floor(Math.random() * mouthFrames.length) - 1;
                 frameIndex = frameIndex < 0 ? 0 : frameIndex;
 
@@ -316,7 +281,6 @@
                     setTimeout(() => {
                         requestAnimationFrame(animateMouth);
                     }, 200); // Delay de 50ms para permitir renderizar la imagen
-                    // requestAnimationFrame(animateMouth);
                 } else {
                     avatar.src = mouthFrames[0]; // Volver a boca cerrada cuando termine
                 }
@@ -328,89 +292,12 @@
                 });
             };
 
-            audio.play();
-
-            // // Reproducir la respuesta en voz
-            // const audioUrl = `http://127.0.0.1:8000/voice?text=${encodeURIComponent(data.response)}`;
-            // speak(data.response); // Llama a la función speak para reproducir el audio
-            // // playVoice(audioUrl);
-            // //const audio = new Audio(audioUrl);
-            // //audio.play();
-
-            // // Aquí puedes agregar la animación de la cabeza
-            // animateHead();
+            continueButton.addEventListener("click", () => {
+                audio.play().catch(error => {
+                    console.error("Audio playback failed:", error);
+                });
+            });
         }
-
-        // function animateHead() {
-        //     // Aquí va tu código de animación de la cabeza (puede ser con un gif o un video)
-        //     const avatar = document.getElementById("avatar");
-        //     avatar.style.backgroundColor = "blue"; // Cambio de color como ejemplo
-        // }
-
-        // async function generateVoice(text) {
-        //     const response = await fetch(`http://127.0.0.1:8000/voice?text=${encodeURIComponent(text)}`);
-        //     const data = await response.json();
-
-        //     console.log("Audio generado:", data.audio_url);
-        //     return data.audio_url;
-        // }
-
-        // async function playAudio(audioUrl) {
-        //     const audio = new Audio(`http://127.0.0.1:8000${audioUrl}`);
-        //     audio.play();
-        // }
-
-
-        // async function speak(text) {
-        //     const audioUrl = await generateVoice(text);
-        //     playAudio(audioUrl);
-        // }
-        // speak("Hola, cómo estás?");
-
-
-        // async function playVoice(audioUrl) {
-        //     const audio = new Audio(audioUrl);
-        //     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        //     const source = audioContext.createMediaElementSource(audio);
-        //     const analyser = audioContext.createAnalyser();
-        //     source.connect(analyser);
-        //     analyser.connect(audioContext.destination);
-
-        //     analyser.fftSize = 512;
-        //     const bufferLength = analyser.frequencyBinCount;
-        //     const dataArray = new Uint8Array(bufferLength);
-
-        //     const avatar = document.getElementById("avatar"); // Imagen del avatar
-
-        //     function animateMouth() {
-        //         analyser.getByteFrequencyData(dataArray);
-        //         let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength; // Calcula el volumen promedio
-
-        //         if (volume < 10) {
-        //             avatar.src = mouthFrames[0]; // Boca cerrada
-        //         } else if (volume < 50) {
-        //             avatar.src = mouthFrames[1]; // Boca semiabierta
-        //         } else if (volume < 100) {
-        //             avatar.src = mouthFrames[2]; // Boca abierta
-        //         } else {
-        //             avatar.src = mouthFrames[3]; // Boca más abierta
-        //         }
-
-        //         if (!audio.paused) {
-        //             requestAnimationFrame(animateMouth);
-        //         } else {
-        //             avatar.src = mouthFrames[0]; // Volver a boca cerrada cuando termine
-        //         }
-        //     }
-
-        //     audio.onplay = () => {
-        //         audioContext.resume().then(() => {
-        //             animateMouth();
-        //         });
-        //     };
-
-        //     audio.play();
-        // }
 
     </script>
 </body>
