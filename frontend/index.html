@@ -292,10 +292,13 @@
                 });
             };
 
-            continueButton.addEventListener("click", () => {
-                audio.play().catch(error => {
-                    console.error("Audio playback failed:", error);
-                });
+            audio.play().then(() => {
+                // Esperar a que el audio se reproduzca
+                setTimeout(() => {
+                    avatar.src = mouthFrames[0]; // Volver a boca cerrada al finalizar
+                }, audio.duration * 1000); // Convertir a milisegundos
+            }).catch(error => {
+                console.error('Error al reproducir el audio:', error);
             });
         }
 
