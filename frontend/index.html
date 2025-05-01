@@ -285,32 +285,29 @@
                 // }
 
                 // // OPCION 2
-                // let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-                // const frameIndex = Math.min(
-                //     Math.floor((volume / 255) * mouthFrames.length),
-                //     mouthFrames.length - 1
-                // );
-                // avatar.src = mouthFrames[frameIndex];
-
-                // OPCION 3
-                let frameIndex = 0;
-                analyser.getByteFrequencyData(dataArray);
                 let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+                const frameIndex = Math.min(
+                    Math.floor((volume / 255) * mouthFrames.length),
+                    mouthFrames.length - 1
+                );
 
-                console.log("volume", volume);
-                if (volume < 1) {
-                    // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
-                    const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
-                    frameIndex = closedMouthFrames[Math.floor(Date.now() / 100) % closedMouthFrames.length];
-                } else {
-                    // Gesticular según el volumen
-                    frameIndex = Math.min(
-                        Math.floor((volume / 255) * (mouthFrames.length - 1)),
-                        mouthFrames.length - 1
-                    );
-                }
+                // // OPCION 3
+                // let frameIndex = 0;
+                // analyser.getByteFrequencyData(dataArray);
+                // let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
 
-                console.log("frameIndex", frameIndex);
+                // if (volume < 5) {
+                //     // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
+                //     const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
+                //     frameIndex = closedMouthFrames[Math.floor(Date.now() / 100) % closedMouthFrames.length];
+                // } else {
+                //     // Gesticular según el volumen
+                //     frameIndex = Math.min(
+                //         Math.floor((volume / 255) * (mouthFrames.length - 1)),
+                //         mouthFrames.length - 1
+                //     );
+                // }
+
                 avatar.src = mouthFrames[frameIndex];
 
                 if (!audio.paused) {
