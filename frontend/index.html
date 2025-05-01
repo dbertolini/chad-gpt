@@ -296,16 +296,19 @@
                 analyser.getByteFrequencyData(dataArray);
                 let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
 
+                // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
+                const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
                 if (volume < 5) {
-                    // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
-                    const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
-                    frameIndex = closedMouthFrames[Math.floor(Date.now() / 100) % closedMouthFrames.length];
+                    //frameIndex = closedMouthFrames[Math.floor(Date.now() / 100) % closedMouthFrames.length];
+                    frameIndex = closedMouthFrames[Math.floor(Math.random() * closedMouthFrames.length)];
                 } else {
                     // Gesticular según el volumen
-                    frameIndex = Math.min(
-                        Math.floor((volume / 255) * (mouthFrames.length - 1)),
-                        mouthFrames.length - 1
-                    );
+                    // frameIndex = Math.min(
+                    //     Math.floor((volume / 255) * (mouthFrames.length - 1)),
+                    //     mouthFrames.length - 1
+                    // );
+                    const openMouthFrames = mouthFrames.filter((_, index) => !closedMouthFrames.includes(index));
+                    frameIndex = openMouthFrames[Math.floor(Math.random() * openMouthFrames.length)];
                 }
 
                 avatar.src = mouthFrames[frameIndex];
