@@ -298,7 +298,7 @@
                 let volume = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
 
                 console.log("volume", volume);
-                if (volume < 5) {
+                if (volume < 1) {
                     // Silencio: alternar entre imágenes de "Boca cerrada en movimiento"
                     const closedMouthFrames = [2, 5, 8, 9, 19, 29, 30, 33, 34, 36];
                     frameIndex = closedMouthFrames[Math.floor(Date.now() / 100) % closedMouthFrames.length];
