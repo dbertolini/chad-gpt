@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChadGPT</title>
+    <link rel="icon" type="image/png" href="images/avatar/1.png">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        #response-container {
+            margin-top: 20px;
+        }
+
+        #avatar {
+            width: 400px;
+            background-color: #ccc;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Video de fondo -->
+    <video id="background-video" autoplay loop muted>
+        <source src="videos/spiral.mp4" type="video/mp4">
+        Tu navegador no soporta la reproducción de videos.
+    </video>
+
+    <div
+        style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; width: 80%; max-width: 800px; gap: 10px;">
+        <textarea id="user-input" rows="1" maxlength="500" placeholder=""
+            style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
+        <button onclick="sendMessage(event)"
+            style="display: block; padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer; text-transform: uppercase;">
+            Enviar
+        </button>
+    </div>
+
+    <div id="avatar-container"
+        style="background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;">
+        <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none;  width: 350px;">
+    </div>
+
+    <style>
+        @keyframes float {
+            0% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateY(-20px);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+        }
+    </style>
+
+    <div id="response-container" style="text-align: center; margin-top: 20px;">
+        <p id="response-text"
+            style="display: inline-block; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px; max-width: 80%; word-wrap: break-word; font-size: 18px;">
+        </p>
+    </div>
+
+    <script>
+        // Código existente para el manejo de mensajes y animaciones
+        document.getElementById("user-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage(event);
+            }
+        });
+
+        const mouthFrames = [
+            "images/avatar/1.png", // Boca cerrada (reposo)
+            "images/avatar/2.png", // Boca cerrada en movimiento
+            "images/avatar/3.png",
+            "images/avatar/4.png",
+            "images/avatar/5.png",// Boca cerrada en movimiento
+            "images/avatar/6.png",
+            "images/avatar/7.png",
+            "images/avatar/8.png",// Boca cerrada en movimiento
+            "images/avatar/9.png",// Boca cerrada en movimiento
+            "images/avatar/10.png",
+            "images/avatar/11.png",
+            "images/avatar/12.png",
+            "images/avatar/13.png",
+            "images/avatar/14.png",
+            "images/avatar/15.png",
+            "images/avatar/16.png",
+            "images/avatar/17.png",
+            "images/avatar/18.png",
+            "images/avatar/19.png",// Boca cerrada en movimiento
+            "images/avatar/20.png",
+            "images/avatar/21.png",
+            "images/avatar/22.png",
+            "images/avatar/23.png",
+            "images/avatar/24.png",
+            "images/avatar/25.png",
+            "images/avatar/26.png",
+            "images/avatar/27.png",
+            "images/avatar/28.png",
+            "images/avatar/29.png",// Boca cerrada en movimiento
+            "images/avatar/30.png",// Boca cerrada en movimiento
+            "images/avatar/31.png",
+            "images/avatar/32.png",
+            "images/avatar/33.png",// Boca cerrada en movimiento
+            "images/avatar/34.png",// Boca cerrada en movimiento
+            "images/avatar/35.png",
+            "images/avatar/36.png",// Boca cerrada en movimiento
+            "images/avatar/37.png",
+            "images/avatar/38.png",
+            "images/avatar/39.png",
+            "images/avatar/40.png",
+            "images/avatar/41.png"
+        ];
+
+        async function sendMessage(event) {
+            event.preventDefault(); // Prevent page refresh
+            const userInput = document.getElementById("user-input").value;
+            document.getElementById("user-input").value = "";
+            if (!userInput.trim()) return;
+
+            // Enviar solicitud a la API
+            const response = await fetch("https://chad-gpt.azurewebsites.net/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ input_text: userInput })
+            });
+
+            if (!response.ok) {
+                console.error('Error en la solicitud');
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById("response-text").textContent = data.response;
+            const audioUrl = data.audio_file_path; // URL del archivo de audio devuelto por la API
+            const responseAudio = await fetch("https://chad-gpt.azurewebsites.net/api/audios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ filename: audioUrl })
+            });
+            const audioData = await responseAudio.blob();
+            const audio = new Audio(URL.createObjectURL(audioData));
+
+            audio.crossOrigin = "anonymous";
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaElementSource(audio);
+            const analyser = audioContext.createAnalyser();
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            analyser.fftSize = 512;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const avatar = document.querySelector("#avatar-container img");
+
+            function animateMouth() {
+                analyser.getByteFrequencyData(dataArray);
+
+                let frameIndex = 0;
+                frameIndex = Math.floor(Math.random() * mouthFrames.length) - 1;
+                frameIndex = frameIndex < 0 ? 0 : frameIndex;
+
+                avatar.src = mouthFrames[frameIndex];
+
+                if (!audio.paused) {
+                    setTimeout(() => {
+                        requestAnimationFrame(animateMouth);
+                    }, 200); // Delay de 50ms para permitir renderizar la imagen
+                } else {
+                    avatar.src = mouthFrames[0]; // Volver a boca cerrada cuando termine
+                }
+            }
+
+            audio.onplay = () => {
+                audioContext.resume().then(() => {
+                    animateMouth();
+                });
+            };
+
+            audio.play();
+        }
+
+    </script>
+</body>
+
+</html>
