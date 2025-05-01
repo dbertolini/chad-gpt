@@ -61,9 +61,8 @@
         // Manejo de la introducción
         const introImage = document.getElementById("intro-image");
         const continueButton = document.getElementById("continue-button");
+        const introContainer = document.getElementById("intro-container");
         const introImages = [
-            // "images/intro/1.png",
-            // "images/intro/2.png",
             "images/intro/3.png",
             "images/intro/4.png",
             "images/intro/5.png",
@@ -71,18 +70,48 @@
         ];
         let currentImageIndex = 0;
 
-        // setTimeout(showNextImage, 200);
+        // Función para precargar imágenes
+        function preloadImages(images, callback) {
+            let loadedImages = 0;
+            const totalImages = images.length;
 
-        setInterval(() => {
-            if (currentImageIndex < introImages.length) {
-                introImage.src = introImages[currentImageIndex];
-                currentImageIndex++;
-            } else {
-                currentImageIndex = 0;
-                introImage.src = introImages[currentImageIndex];
-                currentImageIndex++;
-            }
-        }, 200);
+            images.forEach((src) => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    loadedImages++;
+                    if (loadedImages === totalImages) {
+                        callback();
+                    }
+                };
+                img.onerror = () => {
+                    console.error(`Error al cargar la imagen: ${src}`);
+                    loadedImages++;
+                    if (loadedImages === totalImages) {
+                        callback();
+                    }
+                };
+            });
+        }
+
+        // Mostrar las imágenes una vez que estén precargadas
+        preloadImages(introImages, () => {
+            console.log("Todas las imágenes han sido precargadas.");
+            introContainer.style.display = "flex"; // Mostrar el contenedor de introducción
+            setInterval(() => {
+                if (currentImageIndex < introImages.length) {
+                    introImage.src = introImages[currentImageIndex];
+                    currentImageIndex++;
+                } else {
+                    currentImageIndex = 0;
+                    introImage.src = introImages[currentImageIndex];
+                    currentImageIndex++;
+                }
+            }, 200);
+        });
+
+        // Ocultar el contenedor de introducción inicialmente
+        introContainer.style.display = "none";
 
         // Manejar el clic en el botón de continuar
         continueButton.addEventListener("click", () => {

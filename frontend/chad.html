@@ -15,6 +15,25 @@
             overflow: hidden;
         }
 
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #main-content {
+            display: none;
+            /* Ocultar el contenido principal inicialmente */
+        }
+
         #background-video {
             position: fixed;
             top: 0;
@@ -39,68 +58,68 @@
 </head>
 
 <body>
-    <!-- Video de fondo -->
-    <video id="background-video" autoplay loop muted>
-        <source src="videos/spiral.mp4" type="video/mp4">
-        Tu navegador no soporta la reproducción de videos.
-    </video>
-
-    <div
-        style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; width: 80%; max-width: 800px; gap: 10px;">
-        <textarea id="user-input" rows="1" maxlength="500" placeholder=""
-            style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
-        <button onclick="sendMessage(event)"
-            style="display: block; padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer; text-transform: uppercase;">
-            Enviar
-        </button>
+    <!-- Pantalla de carga -->
+    <div id="loading-screen">
+        Cargando...
     </div>
 
-    <div id="avatar-container"
-        style="background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;">
-        <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none;  width: 350px;">
-    </div>
+    <!-- Contenido principal -->
+    <div id="main-content">
+        <!-- Video de fondo -->
+        <video id="background-video" autoplay loop muted>
+            <source src="videos/spiral.mp4" type="video/mp4">
+            Tu navegador no soporta la reproducción de videos.
+        </video>
 
-    <style>
-        @keyframes float {
-            0% {
-                transform: translate(-50%, -50%) translateY(0);
+        <div
+            style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; width: 80%; max-width: 800px; gap: 10px;">
+            <textarea id="user-input" rows="1" maxlength="500" placeholder=""
+                style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
+            <button onclick="sendMessage(event)"
+                style="display: block; padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer; text-transform: uppercase;">
+                Enviar
+            </button>
+        </div>
+
+        <div id="avatar-container"
+            style="background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;">
+            <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none;  width: 350px;">
+        </div>
+
+        <style>
+            @keyframes float {
+                0% {
+                    transform: translate(-50%, -50%) translateY(0);
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) translateY(-20px);
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) translateY(0);
+                }
             }
+        </style>
 
-            50% {
-                transform: translate(-50%, -50%) translateY(-20px);
-            }
-
-            100% {
-                transform: translate(-50%, -50%) translateY(0);
-            }
-        }
-    </style>
-
-    <div id="response-container" style="text-align: center; margin-top: 20px;">
-        <p id="response-text"
-            style="display: inline-block; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px; max-width: 80%; word-wrap: break-word; font-size: 18px;">
-        </p>
+        <div id="response-container" style="text-align: center; margin-top: 20px;">
+            <p id="response-text"
+                style="display: inline-block; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px; max-width: 80%; word-wrap: break-word; font-size: 18px;">
+            </p>
+        </div>
     </div>
 
     <script>
-        // Código existente para el manejo de mensajes y animaciones
-        document.getElementById("user-input").addEventListener("keypress", function (event) {
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage(event);
-            }
-        });
-
         const mouthFrames = [
-            "images/avatar/1.png", // Boca cerrada (reposo)
-            "images/avatar/2.png", // Boca cerrada en movimiento
+            "images/avatar/1.png",
+            "images/avatar/2.png",
             "images/avatar/3.png",
             "images/avatar/4.png",
-            "images/avatar/5.png",// Boca cerrada en movimiento
+            "images/avatar/5.png",
             "images/avatar/6.png",
             "images/avatar/7.png",
-            "images/avatar/8.png",// Boca cerrada en movimiento
-            "images/avatar/9.png",// Boca cerrada en movimiento
+            "images/avatar/8.png",
+            "images/avatar/9.png",
             "images/avatar/10.png",
             "images/avatar/11.png",
             "images/avatar/12.png",
@@ -110,7 +129,7 @@
             "images/avatar/16.png",
             "images/avatar/17.png",
             "images/avatar/18.png",
-            "images/avatar/19.png",// Boca cerrada en movimiento
+            "images/avatar/19.png",
             "images/avatar/20.png",
             "images/avatar/21.png",
             "images/avatar/22.png",
@@ -120,20 +139,59 @@
             "images/avatar/26.png",
             "images/avatar/27.png",
             "images/avatar/28.png",
-            "images/avatar/29.png",// Boca cerrada en movimiento
-            "images/avatar/30.png",// Boca cerrada en movimiento
+            "images/avatar/29.png",
+            "images/avatar/30.png",
             "images/avatar/31.png",
             "images/avatar/32.png",
-            "images/avatar/33.png",// Boca cerrada en movimiento
-            "images/avatar/34.png",// Boca cerrada en movimiento
+            "images/avatar/33.png",
+            "images/avatar/34.png",
             "images/avatar/35.png",
-            "images/avatar/36.png",// Boca cerrada en movimiento
+            "images/avatar/36.png",
             "images/avatar/37.png",
             "images/avatar/38.png",
             "images/avatar/39.png",
             "images/avatar/40.png",
-            "images/avatar/41.png"
+            "images/avatar/41.png",
+            "images/avatar/42.png"
         ];
+
+        // Precargar imágenes
+        function preloadImages(imageArray, callback) {
+            let loadedImages = 0;
+            const totalImages = imageArray.length;
+
+            imageArray.forEach(src => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    loadedImages++;
+                    if (loadedImages === totalImages) {
+                        callback();
+                    }
+                };
+                img.onerror = () => {
+                    console.error(`Error al cargar la imagen: ${src}`);
+                    loadedImages++;
+                    if (loadedImages === totalImages) {
+                        callback();
+                    }
+                };
+            });
+        }
+
+        // Mostrar el contenido principal después de cargar las imágenes
+        preloadImages(mouthFrames, () => {
+            document.getElementById("loading-screen").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+        });
+
+        // Código existente para el manejo de mensajes y animaciones
+        document.getElementById("user-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage(event);
+            }
+        });
 
         async function sendMessage(event) {
             event.preventDefault(); // Prevent page refresh
