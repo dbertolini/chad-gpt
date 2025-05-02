@@ -25,10 +25,17 @@
         }
 
         #avatar {
-            width: 400px;
+            width: 350px;
+            max-width: 90vw;
             background-color: #ccc;
             display: block;
             margin: auto;
+        }
+
+        @media (max-width: 600px) {
+            #avatar {
+                width: 200px;
+            }
         }
 
         @keyframes float {
@@ -65,15 +72,8 @@
     </div>
 
     <div id="avatar-container"
-        style="background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;">
-        <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none; width: 350px;">
-        <style>
-            @media screen and (max-width: 430px) {
-                #avatar {
-                    width: 250px;
-                }
-            }
-        </style>
+        style="background: none; position: absolute; left: 50%; transform: translateX(-50%); animation: float 3s ease-in-out infinite;">
+        <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none;">
     </div>
 
     <div id="response-container" style="text-align: center; margin-top: 20px;">
@@ -85,15 +85,6 @@
     <script>
         const mouthFrames = Array.from({ length: 42 }, (_, i) => `images/avatar/${i + 1}.png`);
         let audioContext = null;
-
-        // function preloadImages(imageArray) {
-        //     imageArray.forEach(src => {
-        //         const img = new Image();
-        //         img.src = src;
-        //     });
-        // }
-
-        // preloadImages(mouthFrames);
 
         document.getElementById("user-input").addEventListener("keypress", function (event) {
             if (event.key === "Enter" && !event.shiftKey) {
@@ -108,7 +99,6 @@
             document.getElementById("user-input").value = "";
             if (!userInput) return;
 
-            // Creamos el AudioContext tras la interacción del usuario si aún no existe
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
@@ -170,6 +160,11 @@
                 alert("Por favor, toca la pantalla o interactúa para permitir la reproducción de audio.");
             }
         }
+
+        window.addEventListener("load", () => {
+            const avatarContainer = document.getElementById("avatar-container");
+            avatarContainer.style.top = `${window.innerHeight / 2}px`;
+        });
     </script>
 </body>
 
