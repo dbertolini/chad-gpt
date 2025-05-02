@@ -93,10 +93,23 @@
 
 <body>
 
-    <video id="background-video" autoplay loop muted playsinline style="pointer-events: none;">
+    <div id="loading-message"
+        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; z-index: 2; background-color: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 10px;">
+        Cargando...
+    </div>
+    <video id="background-video" autoplay loop muted playsinline style="pointer-events: none; display: none;">
         <source src="videos/spiral.mp4" type="video/mp4">
         Tu navegador no soporta la reproducción de videos.
     </video>
+    <script>
+        const video = document.getElementById("background-video");
+        const loadingMessage = document.getElementById("loading-message");
+
+        video.addEventListener("canplaythrough", () => {
+            loadingMessage.style.display = "none";
+            video.style.display = "block";
+        });
+    </script>
 
     <div id="input-container">
         <textarea id="user-input" rows="1" maxlength="500" placeholder=""
