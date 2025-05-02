@@ -73,43 +73,9 @@
             max-width: 800px;
             gap: 10px;
         }
-    </style>
-</head>
 
-<body>
 
-    <div id="loading-message"
-        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; z-index: 2; background-color: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 10px;">
-        Cargando...
-    </div>
-    <video id="background-video" autoplay loop muted playsinline style="pointer-events: none; display: none;">
-        <source src="videos/spiral.mp4" type="video/mp4">
-        Tu navegador no soporta la reproducción de videos.
-    </video>
-    <script>
-        const video = document.getElementById("background-video");
-        const loadingMessage = document.getElementById("loading-message");
-
-        video.addEventListener("canplaythrough", () => {
-            loadingMessage.style.display = "none";
-            video.style.display = "block";
-        });
-    </script>
-
-    <div id="input-container">
-        <textarea id="user-input" rows="1" maxlength="500" placeholder=""
-            style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
-        <button onclick="sendMessage(event)"
-            style="padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer;">
-            Enviar
-        </button>
-    </div>
-
-    <div id="avatar-container" style="animation: float 3s ease-in-out infinite;">
-        <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante">
-    </div>
-    <style>
-        @keyframes float {
+        /* @keyframes float {
             0% {
                 transform: translate(-50%, -50%) translateY(0);
             }
@@ -121,8 +87,29 @@
             100% {
                 transform: translate(-50%, -50%) translateY(0);
             }
-        }
+        } */
     </style>
+</head>
+
+<body>
+
+    <video id="background-video" autoplay loop muted playsinline style="pointer-events: none;">
+        <source src="videos/spiral.mp4" type="video/mp4">
+        Tu navegador no soporta la reproducción de videos.
+    </video>
+
+    <div id="input-container">
+        <textarea id="user-input" rows="1" maxlength="500" placeholder=""
+            style="flex: 1; padding: 10px; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; background-color: black; color: #00ff00; resize: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></textarea>
+        <button onclick="sendMessage(event)"
+            style="padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; border-radius: 4px; font-size: 16px; font-family: 'Courier New', Courier, monospace; cursor: pointer;">
+            Enviar
+        </button>
+    </div>
+
+    <div id="avatar-container">
+        <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante">
+    </div>
 
     <div id="response-container">
         <p id="response-text">
