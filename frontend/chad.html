@@ -94,9 +94,8 @@
 <body>
 
     <div id="loading-message"
-        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; z-index: 3; background-color: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 10px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-    </div>
-    Cargando...
+        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; z-index: 2; background-color: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 10px;">
+        Cargando...
     </div>
     <video id="background-video" autoplay loop muted playsinline style="pointer-events: none; display: none;">
         <source src="videos/spiral.mp4" type="video/mp4">
@@ -121,12 +120,11 @@
         </button>
     </div>
 
-    <!-- <div id="avatar-container" style="animation: float 3s ease-in-out infinite;"> -->
-    <div id="avatar-container">
+    <div id="avatar-container" style="animation: float 3s ease-in-out infinite;">
         <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante">
     </div>
 
-    <!-- <script>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
             const style = document.createElement("style");
             style.textContent = `
@@ -144,7 +142,7 @@
             `;
             document.head.appendChild(style);
         });
-    </script> -->
+    </script>
 
     <div id="response-container">
         <p id="response-text">
