@@ -43,7 +43,7 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-          cd api
+          cd ..
           zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
