@@ -44,6 +44,15 @@
                 transform: translate(-50%, -50%) translateY(0);
             }
         }
+
+        #avatar-container {
+            background: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: float 3s ease-in-out infinite;
+        }
     </style>
 </head>
 
@@ -64,7 +73,7 @@
         </button>
     </div>
 
-    <div id="avatar-container" style="display: none;">
+    <div id="avatar-container">
         <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none; width: 350px;">
     </div>
 
@@ -164,9 +173,25 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const avatarContainer = document.getElementById("avatar-container");
-            avatarContainer.style.cssText = "display: block; background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;";
+            const avatar = document.getElementById("avatar");
+            avatar.addEventListener("load", () => {
+                const avatarContainer = document.getElementById("avatar-container");
+                avatarContainer.style.cssText = "background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;";
+            });
         });
+
+        window.addEventListener("load", () => {
+            const avatarContainer = document.getElementById("avatar-container");
+            avatarContainer.style.cssText = "background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;";
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                const avatarContainer = document.getElementById("avatar-container");
+                avatarContainer.style.cssText = "background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;";
+            }, 100); // Ajusta el tiempo si es necesario
+        });
+
     </script>
 </body>
 
