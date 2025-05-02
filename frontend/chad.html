@@ -15,24 +15,7 @@
             overflow: hidden;
         }
 
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
 
-        #main-content {
-            display: none;
-            /* Ocultar el contenido principal inicialmente */
-        }
 
         #background-video {
             position: fixed;
@@ -58,10 +41,6 @@
 </head>
 
 <body>
-    <!-- Pantalla de carga -->
-    <div id="loading-screen">
-        Cargando...
-    </div>
 
     <!-- Contenido principal -->
     <div id="main-content">
@@ -156,34 +135,22 @@
         ];
 
         // Precargar imágenes
-        function preloadImages(imageArray, callback) {
+        function preloadImages(imageArray) {
             let loadedImages = 0;
-            const totalImages = imageArray.length;
 
             imageArray.forEach(src => {
                 const img = new Image();
                 img.src = src;
                 img.onload = () => {
-                    loadedImages++;
-                    if (loadedImages === totalImages) {
-                        callback();
-                    }
                 };
                 img.onerror = () => {
-                    console.error(`Error al cargar la imagen: ${src}`);
-                    loadedImages++;
-                    if (loadedImages === totalImages) {
-                        callback();
-                    }
+                    //console.error(`Error al cargar la imagen: ${src}`);
                 };
             });
         }
 
         // Mostrar el contenido principal después de cargar las imágenes
-        preloadImages(mouthFrames, () => {
-            document.getElementById("loading-screen").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-        });
+        preloadImages(mouthFrames);
 
         // Código existente para el manejo de mensajes y animaciones
         document.getElementById("user-input").addEventListener("keypress", function (event) {
