@@ -120,29 +120,9 @@
         </button>
     </div>
 
-    <div id="avatar-container" style="animation: float 3s ease-in-out infinite;">
+    <div id="avatar-container">
         <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante">
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const style = document.createElement("style");
-            style.textContent = `
-                @keyframes float {
-                    0% {
-                        transform: translate(-50%, -50%) translateY(0);
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) translateY(-10px);
-                    }
-                    100% {
-                        transform: translate(-50%, -50%) translateY(0);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        });
-    </script>
 
     <div id="response-container">
         <p id="response-text">
