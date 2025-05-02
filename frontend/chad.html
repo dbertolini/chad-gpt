@@ -64,7 +64,8 @@
         </button>
     </div>
 
-    <div id="avatar-container" style="display: none;">
+    <div id="avatar-container"
+        style="background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;">
         <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante" style="background: none; width: 350px;">
     </div>
 
@@ -162,11 +163,6 @@
                 alert("Por favor, toca la pantalla o interactúa para permitir la reproducción de audio.");
             }
         }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const avatarContainer = document.getElementById("avatar-container");
-            avatarContainer.style.cssText = "display: block; background: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float 3s ease-in-out infinite;";
-        });
     </script>
 </body>
 
