@@ -218,7 +218,7 @@
                 if (!audio.paused) {
                     setTimeout(() => {
                         requestAnimationFrame(animateMouth);
-                    }, 200); // Delay de 50ms para permitir renderizar la imagen
+                    }, 100); // Delay de 50ms para permitir renderizar la imagen
                 } else {
                     avatar.src = mouthFrames[0]; // Volver a boca cerrada cuando termine
                 }
