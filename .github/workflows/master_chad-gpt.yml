@@ -1,5 +1,3 @@
-# Despliegue de Azure Function App con Python usando GitHub Actions
-
 name: Build and deploy Python project to Azure Function App - chad-gpt
 
 on:
@@ -9,14 +7,14 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./api" # Ruta donde está tu función
-  PYTHON_VERSION: "3.11" # Versión de Python a usar
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./api"
+  PYTHON_VERSION: "3.11"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read # Requerido por actions/checkout
+      contents: read
 
     steps:
       - name: Checkout repository
@@ -29,7 +27,6 @@ jobs:
 
       - name: Create and start virtual environment
         run: |
-          cd api
           python -m venv venv
           source venv/bin/activate
 
@@ -38,7 +35,7 @@ jobs:
           cd api
           pip install -r requirements.txt
 
-      # (Opcional) Ejecutar tests aquí si querés
+      # Opcional: acá podrías correr tests
 
       - name: Zip artifact for deployment
         run: |
@@ -49,15 +46,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write # Necesario para autenticación con Azure
+      id-token: write
       contents: read
 
     steps:
@@ -82,4 +77,4 @@ jobs:
         with:
           app-name: "chad-gpt"
           slot-name: "Production"
-          package: release.zip # Cambiado para apuntar al archivo ZIP generado
+          package: .
