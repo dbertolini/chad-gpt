@@ -14,7 +14,7 @@
             overflow: hidden;
         }
 
-        #background-video {
+        /* #background-video {
             position: fixed;
             top: 0;
             left: 0;
@@ -22,6 +22,43 @@
             height: 100%;
             object-fit: cover;
             z-index: -1;
+        } */
+
+        #image-background {
+            position: fixed;
+            top: -5%;
+            left: -6%;
+            width: 120%;
+            height: 120%;
+            object-fit: cover;
+            z-index: -2;
+            animation: float-bg 6s linear infinite;
+        }
+
+        @keyframes float-bg {
+            0% {
+                transform: translate(0px, 0px);
+            }
+
+            20% {
+                transform: translate(20px, -20px);
+            }
+
+            40% {
+                transform: translate(0px, -40px);
+            }
+
+            60% {
+                transform: translate(-20px, -20px);
+            }
+
+            80% {
+                transform: translate(-15px, 15px);
+            }
+
+            100% {
+                transform: translate(0px, 0px);
+            }
         }
 
         #response-container {
@@ -96,9 +133,7 @@
         Tu navegador no soporta la reproducción de videos.
     </video> -->
 
-    <div id="background-image"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('images/background/background.png'); background-size: cover; background-position: center; z-index: -2;">
-    </div>
+    <img id="image-background" src="images/background/background.png" />
 
     <div id="input-container">
         <textarea id="user-input" rows="1" maxlength="500" placeholder=""
