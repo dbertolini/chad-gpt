@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChadGPT</title>
-    <link rel="icon" type="image/png" href="images/avatar/1.png">
+    <link rel="icon" type="image/png" href="images/favicon/favicon.png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,10 +56,39 @@
 
 <body>
 
-    <video id="background-video" autoplay loop muted playsinline style="pointer-events: none;">
+    <!-- <video id="background-video" autoplay loop muted playsinline style="pointer-events: none;">
         <source src="videos/spiral.mp4" type="video/mp4">
         Tu navegador no soporta la reproducción de videos.
-    </video>
+    </video> -->
+
+    <img id="background-image" src="images/background/background.png" alt="Fondo estático"
+        style="position: fixed; top: -55%; left: -52%; width: 220%; height: 220%; object-fit: cover; z-index: -1; animation: spin 20s linear infinite, pulse 5s ease-in-out infinite;">
+
+    <style>
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+    </style>
+    <!-- 
+    <style>
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style> -->
 
     <div
         style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; width: 80%; max-width: 800px; gap: 10px;">
