@@ -79,14 +79,14 @@
         const mouthFrames = Array.from({ length: 42 }, (_, i) => `images/avatar/${i + 1}.png`);
         let audioContext = null;
 
-        function preloadImages(imageArray) {
-            imageArray.forEach(src => {
-                const img = new Image();
-                img.src = src;
-            });
-        }
+        // function preloadImages(imageArray) {
+        //     imageArray.forEach(src => {
+        //         const img = new Image();
+        //         img.src = src;
+        //     });
+        // }
 
-        preloadImages(mouthFrames);
+        // preloadImages(mouthFrames);
 
         document.getElementById("user-input").addEventListener("keypress", function (event) {
             if (event.key === "Enter" && !event.shiftKey) {
