@@ -148,7 +148,7 @@
                 avatar.src = mouthFrames[frameIndex];
 
                 if (!audio.paused) {
-                    setTimeout(() => requestAnimationFrame(animateMouth), 100);
+                    setTimeout(() => requestAnimationFrame(animateMouth), 250);
                 } else {
                     avatar.src = mouthFrames[0];
                 }
