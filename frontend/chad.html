@@ -120,9 +120,29 @@
         </button>
     </div>
 
-    <div id="avatar-container">
+    <div id="avatar-container" style="animation: float 3s ease-in-out infinite;">
         <img id="avatar" src="images/avatar/1.png" alt="Cabeza parlante">
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const style = document.createElement("style");
+            style.textContent = `
+                @keyframes float {
+                    0% {
+                        transform: translate(-50%, -50%) translateY(0);
+                    }
+                    50% {
+                        transform: translate(-50%, -50%) translateY(-10px);
+                    }
+                    100% {
+                        transform: translate(-50%, -50%) translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
 
     <div id="response-container">
         <p id="response-text">
@@ -174,10 +194,6 @@
             responseContainer.style.animation = "fade 1s infinite";
             document.getElementById("response-text").textContent = "...";
 
-
-
-
-
             try {
                 const response = await fetch("https://chad-gpt.azurewebsites.net/api/chat", {
                     method: "POST",
@@ -185,6 +201,7 @@
                     body: JSON.stringify({ input_text: userInput })
                 });
                 responseContainer.style.display = "block";
+                responseContainer.style.animation = "none";
                 document.querySelector("button[onclick='sendMessage(event)']").disabled = false;
                 document.querySelector("button[onclick='sendMessage(event)']").style.backgroundColor = "black";
                 document.querySelector("button[onclick='sendMessage(event)']").style.color = "#00ff00";
