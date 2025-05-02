@@ -40,15 +40,15 @@ jobs:
       # (Opcional) Ejecutar tests aquí si querés
 
       - name: Zip artifact for deployment
-        run: |
-          cd api
-          zip -r ../release.zip . -x "venv/*"
+        run: zip -r ../release.zip . -x "venv/*"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: release.zip
+          path: |
+            release.zip
+            !venv/
 
   deploy:
     runs-on: ubuntu-latest
