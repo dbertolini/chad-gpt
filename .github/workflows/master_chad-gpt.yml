@@ -81,4 +81,4 @@ jobs:
         with:
           app-name: "chad-gpt"
           slot-name: "Production"
-          package: .
+          package: release.zip # Cambiado para apuntar al archivo ZIP generado
