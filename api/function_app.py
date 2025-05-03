@@ -9,9 +9,9 @@ import azure.cognitiveservices.speech as speechsdk
 
 # Definir la carpeta temporal dependiendo del sistema operativo
 if os.name == 'nt':  # Si es Windows
-    AUDIO_FOLDER = "D:\\local\\Temp"
+    AUDIO_FOLDER = "D:\\local\\Temp\\audios"
 else:  # Si es Linux (por defecto en Azure Functions)
-    AUDIO_FOLDER = "/tmp"
+    AUDIO_FOLDER = "/tmp/audios"
 
 # Asegurarse de que el directorio temporal exista
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
@@ -63,7 +63,7 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Input text: %s", input_text)
 
     # Llamar al modelo con las instrucciones predefinidas
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model=model_name,
         messages=[
             {"role": "system", "content": "No incluyas emojis en tus respuestas. Tu acento es argentino. No utilices muchas comas ni signos de admiración. Ofrece una respuesta corta. " \
@@ -75,10 +75,7 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
             "A veces cuando se consultara por Ca7riel y Paco Amoroso, usar palabras como 'esas ratitas putas' o 'tomaron mucha papota'" \
             },  # Instrucción al modelo
             {"role": "user", "content": input_text}
-        ],
-        max_tokens=4096,
-        temperature=1.0,
-        top_p=1.0,
+        ]
     )
     text_response = response.choices[0].message.content
     logging.info("Response from OpenAI: %s", text_response)
