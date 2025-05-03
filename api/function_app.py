@@ -4,6 +4,7 @@ from datetime import datetime
 import uuid
 import json
 from openai import AzureOpenAI  
+import logging
 import azure.cognitiveservices.speech as speechsdk
 
 # Definir la carpeta temporal dependiendo del sistema operativo
@@ -18,11 +19,13 @@ os.makedirs(AUDIO_FOLDER, exist_ok=True)
 # Configuración de Azure OpenAI
 endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
 subscription_key = os.getenv("AZURE_OPENAI_KEY")
+api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+model_name = os.getenv("AZURE_OPENAI_MODEL_NAME")
 
 client = AzureOpenAI(
     azure_endpoint=endpoint,
     api_key=subscription_key,
-    api_version="2024-05-01-preview",
+    api_version=api_version,
 )
 
 # Configuración de Speech
@@ -54,10 +57,14 @@ def get_audio_file(req: func.HttpRequest) -> func.HttpResponse:
 
 @app.route(route="chat", methods=["POST"])
 async def chat(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("Chat endpoint was called.")
     data = req.get_json()
     input_text = data.get("input_text")
+    logging.info("Input text: %s", input_text)
+
+    # Llamar al modelo con las instrucciones predefinidas
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=model_name,
         messages=[
             {"role": "system", "content": "No incluyas emojis en tus respuestas. Tu acento es argentino. No utilices muchas comas ni signos de admiración. Ofrece una respuesta corta. " \
             "Ca7riel y Paco Amoroso (o Cato y Paco, o Catriel y Paquito) son dos artistas de la escena urbana argentina que fusionan géneros. " \
@@ -68,31 +75,44 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
             "A veces cuando se consultara por Ca7riel y Paco Amoroso, usar palabras como 'esas ratitas putas' o 'tomaron mucha papota'" \
             },  # Instrucción al modelo
             {"role": "user", "content": input_text}
-        ]
+        ],
+        max_tokens=4096,
+        temperature=1.0,
+        top_p=1.0,
     )
     text_response = response.choices[0].message.content
+    logging.info("Response from OpenAI: %s", text_response)
 
     # Limpiar archivos antiguos
     current_datetime = datetime.now()
     for filename in os.listdir(AUDIO_FOLDER):
+        logging.info("Processing file: %s", filename)
         file_path = os.path.join(AUDIO_FOLDER, filename)
+        logging.info("File path: %s", file_path)
         if os.path.isfile(file_path):
             try:
+                logging.info("File is a valid file.")
                 # Extraer la fecha y hora del archivo
                 file_datetime_str = "_".join(filename.split("_")[:2])
                 file_datetime = datetime.strptime(file_datetime_str, "%Y-%m-%d_%H-%M-%S")
                 
                 # Borrar archivos mayores a 1 hora
                 if (current_datetime - file_datetime).total_seconds() > 3600:
+                    logging.info("File is older than 1 hour, deleting: %s", filename)
                     os.remove(file_path)
             except ValueError:
+                logging.error("Error parsing datetime from filename: %s", filename)
                 continue
+
+    logging.info("Old files cleaned up.")
 
     # Generar nuevo nombre de archivo
     current_datetime_str = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
     audio_file_path = os.path.join(AUDIO_FOLDER, f"{current_datetime_str}_{uuid.uuid4()}.mp3")
     audio_config = speechsdk.audio.AudioOutputConfig(filename=audio_file_path)
     
+    logging.info("Audio file path: %s", audio_file_path)
+
     # Crear SSML
     ssml_text = f"""
     <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-ES">
@@ -106,11 +126,13 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
     speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
 
     speech_synthesizer.speak_ssml_async(ssml_text).get()
-    
+    logging.info("Audio synthesis completed.")
+
     response_object = {
         "response": text_response,
         "audio_file_path": f"{os.path.basename(audio_file_path)}"
     }
+    logging.info("Response object: %s", response_object)
 
     # Responder
     return func.HttpResponse(
