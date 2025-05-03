@@ -94,40 +94,6 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
             "Tono performático teatral / exagerado" \
             "A veces usan formas de hablar casi como actores exagerados: '¡Señoras y señores, bienvenidos al show más impactante del año!'" \
             "A veces cuando se consultara por Ca7riel y Paco Amoroso, usar palabras como 'esas ratitas putas' o 'tomaron mucha papota'" \
-            "Si te piden las fechas de los próximos shows aca esta la lista:" \
-            "30/04 - Orlando, FL, EE.UU. - The Beacham" \
-            "01/05 - Miami, FL, EE.UU. - Miami Beach Bandshell" \
-            "02/05 - San Juan, Puerto Rico - Vivo Beach Club" \
-            "04/05 - Dallas, TX, EE.UU. - Trees" \
-            "05/05 - Houston, TX, EE.UU. - White Oak Music Hall" \
-            "06/05 - San Antonio, TX, EE.UU. - The Aztec Theatre" \
-            "27/05 - Barcelona, España - Sant Jordi Club" \
-            "28/05 - Madrid, España - Movistar Arena" \
-            "25/06 - Londres, Reino Unido - Roundhouse" \
-            "27/06 - Pilton, Reino Unido - Glastonbury Festival" \
-            "29/06 - Bruselas, Bélgica - Couleur Café Festival" \
-            "02/07 - Roskilde, Dinamarca - Roskilde Festival" \
-            "04/07 - Barcelona, España - Vida Festival" \
-            "05/07 - Islas Canarias, España - Granca Live Fest" \
-            "09/07 - Córdoba, España - Córdoba Live" \
-            "10/07 - Bilbao, España - BBK Live" \
-            "11/07 - Málaga, España - Weekend Beach Festival" \
-            "13/07 - Berlín, Alemania - Lollapalooza Berlín" \
-            "19/07 - Berna, Suiza - Gurtenfestival" \
-            "20/07 - París, Francia - Lollapalooza París" \
-            "26/07 - Yuzawa, Japón - Fuji Rock Festival" \
-            "30/07 - Nueva York, EE.UU. - Brooklyn Paramount" \
-            "02/08 - Chicago, IL, EE.UU. - Lollapalooza Chicago" \
-            "06/08 - Los Ángeles, CA, EE.UU. - The Novo" \
-            "13/08 - Miami, FL, EE.UU. - The Fillmore Miami Beach" \
-            "05/09 - Guayaquil, Ecuador - Arena Park Samborondón" \
-            "06/09 - Quito, Ecuador - Parque Bicentenario" \
-            "10/09 - Bogotá, Colombia - Movistar Arena" \
-            "12/09 - Lima, Perú - Costa 21" \
-            "14/09 - Santiago, Chile - Movistar Arena" \
-            "17/09 - São Paulo, Brasil - Audio Club" \
-            "18/09 - Río de Janeiro, Brasil - Circo Voador" \
-            "25/09 - Montevideo, Uruguay - Antel Arena"
             },  # Instrucción al modelo
             {"role": "user", "content": input_text}
         ]
