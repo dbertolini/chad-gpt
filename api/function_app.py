@@ -5,6 +5,7 @@ import uuid
 import json
 from openai import AzureOpenAI  
 import logging
+import time
 import azure.cognitiveservices.speech as speechsdk
 
 # Definir la carpeta temporal dependiendo del sistema operativo
@@ -63,7 +64,7 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Input text: %s", input_text)
 
     # Llamar al modelo con las instrucciones predefinidas
-    response = await client.chat.completions.create(
+    response = client.chat.completions.create(
         model=model_name,
         messages=[
             {"role": "system", "content": "No incluyas emojis en tus respuestas. Tu acento es argentino. No utilices muchas comas ni signos de admiración. Ofrece una respuesta corta. " \
@@ -77,7 +78,20 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
             {"role": "user", "content": input_text}
         ]
     )
-    text_response = response.choices[0].message.content
+    start_time = time.time()
+    text_response = None
+
+    while (time.time() - start_time) < 10:
+        if response.choices[0].message.content is not None:
+            text_response = response.choices[0].message.content
+            break
+        time.sleep(0.5)  # Wait for 500ms before checking again
+
+    if text_response is None:
+        return func.HttpResponse(
+            "No response received from OpenAI within the timeout period.",
+            status_code=504
+        )
     logging.info("Response from OpenAI: %s", text_response)
 
     # Limpiar archivos antiguos
